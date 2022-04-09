@@ -1,2 +1,2 @@
 # IvyCraft
- Code for handeling the IvyCraft server.
+Code for handeling the IvyCraft server.
