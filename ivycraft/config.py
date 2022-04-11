@@ -13,7 +13,7 @@ class Config:
     db_password: str = "**DATABASE PASSWORD**"
     db_host: str = "localhost"
 
-    def save(self):
+    def save(self) -> None:
         pth = Path("config.json")
 
         dct = asdict(self)
@@ -40,7 +40,9 @@ class Config:
                 c = Config(
                     **{
                         k: v
-                        for k, v in cast(dict, json.loads(f.read())).items()
+                        for k, v in cast(
+                            "dict[Any, Any]", json.loads(f.read())
+                        ).items()
                         if k in keys
                     }
                 )
