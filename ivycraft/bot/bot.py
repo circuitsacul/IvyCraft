@@ -14,7 +14,7 @@ class Bot(crescent.Bot):
         )
 
         self.db = IvyDB()
-        self.server = MCServer()
+        self.server = MCServer(self)
 
         self.plugins.load("ivycraft.bot.commands")
 
