@@ -11,7 +11,7 @@ class Whitelist:
         self.path = path
 
     def whitelist_by_name(self) -> dict[str, str]:
-        with self.path.open("w") as f:
+        with self.path.open("r") as f:
             lines = f.read()
 
         data = json.loads(lines)
