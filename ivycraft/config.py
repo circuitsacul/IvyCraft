@@ -8,6 +8,7 @@ from typing import Any, Optional, cast
 @dataclass
 class Config:
     discord_token: str = "**DISCORD BOT TOKEN**"
+    log_channel: int = -1
     ivycraft_guild: int = -1
     required_role: int = -1
 

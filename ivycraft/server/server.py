@@ -3,18 +3,44 @@ from __future__ import annotations
 import asyncio
 import pathlib
 import subprocess
+import threading
+from typing import TYPE_CHECKING, Iterator
+
+import hikari
 
 from ivycraft.config import CONFIG
 from ivycraft.database.models.user import User
 
 from .whitelist import Whitelist
 
+if TYPE_CHECKING:
+    from ivycraft.bot.bot import Bot
+
+
+def paginate(text: str) -> Iterator[str]:
+    current = 0
+    jump = 500
+    while True:
+        page = text[current : current + jump]
+        current += jump
+        yield page
+        if current >= len(text):
+            return
+
 
 class MCServer:
-    def __init__(self) -> None:
+    def __init__(self, bot: Bot) -> None:
+        self.bot = bot
+        self._wh: hikari.ExecutableWebhook | None = None
+
         self.proc: subprocess.Popen[bytes] | None = None
         self.path = pathlib.Path(CONFIG.server_path)
         self.whitelist = Whitelist(self.path / "whitelist.json")
+
+        self.to_log: list[str] = []
+
+        self.reader = threading.Thread(target=self._reader_thread)
+        self.reader.start()
 
     async def start(self) -> None:
         self.proc = subprocess.Popen(
@@ -26,6 +52,17 @@ class MCServer:
             shell=True,
         )
         await self.update_whitelist()
+
+    async def logger_loop(self) -> None:
+        while True:
+            await asyncio.sleep(10)
+            if not self.to_log:
+                continue
+
+            to_send = "\n".join(lin.strip() for lin in self.to_log)
+            for page in paginate(to_send):
+                await self.bot.rest.create_message(CONFIG.log_channel, page)
+            self.to_log.clear()
 
     def command(self, command: str) -> None:
         assert self.proc is not None
@@ -43,3 +80,13 @@ class MCServer:
         user.minecraft_uuid = self.whitelist.whitelist_by_name()[mc_name]
         await user.save()
         await self.update_whitelist()
+
+    def _reader_thread(self) -> None:
+        assert self.proc is not None
+        assert self.proc.stdout is not None
+        for _line in iter(self.proc.stdout.readline, b""):
+            line: str = _line.decode().strip()
+            if "Preparing spawn area" in line:
+                continue
+            self.to_log.append(line)
+            print(line)
