@@ -2,15 +2,20 @@ import inspect
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Optional, cast
 
 
 @dataclass
 class Config:
     discord_token: str = "**DISCORD BOT TOKEN**"
+    ivycraft_guild: int = -1
+    required_role: int = -1
+
+    server_path: str = "**PATH TO SERVER JAR**"
+
     db_name: str = "**DATABASE NAME**"
-    db_user: str = "**DATABASE USER**"
-    db_password: str = "**DATABASE PASSWORD**"
+    db_user: Optional[str] = None
+    db_password: Optional[str] = None
     db_host: str = "localhost"
 
     def save(self) -> None:
