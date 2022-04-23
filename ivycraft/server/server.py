@@ -40,7 +40,7 @@ class MCServer:
         self.to_log: list[str] = []
 
         self.reader = threading.Thread(target=self._reader_thread)
-        self.reader.start()
+        self.logger: asyncio.Task[None] | None = None
 
     async def start(self) -> None:
         self.proc = subprocess.Popen(
@@ -51,7 +51,9 @@ class MCServer:
             stdin=subprocess.PIPE,
             shell=True,
         )
+        self.reader.start()
         await self.update_whitelist()
+        self.logger = asyncio.create_task(self.logger_loop())
 
     async def logger_loop(self) -> None:
         while True:
