@@ -44,6 +44,8 @@ class WhitelistUser:
     user = crescent.option(hikari.User, "The user to whitelist.")
 
     async def callback(self, ctx: crescent.Context) -> None:
+        bot = cast("Bot", ctx.app)
+
         user = await User.exists(discord_id=self.user.id)
         if not user:
             user = await User(
@@ -55,6 +57,7 @@ class WhitelistUser:
             await user.save()
 
         await ctx.respond(f"{self.user} has been whitelisted.")
+        await bot.server.update_whitelist()
 
 
 @plugin.include
@@ -64,6 +67,8 @@ class UnwhitelistUser:
     user = crescent.option(hikari.User, "The user to unwhitelist.")
 
     async def callback(self, ctx: crescent.Context) -> None:
+        bot = cast("Bot", ctx.app)
+
         user = await User.exists(discord_id=self.user.id)
         if (not user) or user.whitelisted is False:
             await ctx.respond(f"{self.user} is not whitelisted.")
@@ -73,6 +78,7 @@ class UnwhitelistUser:
         await user.save()
 
         await ctx.respond(f"{self.user} has been unwhitelisted.")
+        await bot.server.update_whitelist()
 
 
 @plugin.include
