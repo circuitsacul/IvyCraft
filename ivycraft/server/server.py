@@ -90,5 +90,7 @@ class MCServer:
             line: str = _line.decode().strip()
             if "Preparing spawn area" in line:
                 continue
+            if "User Authenticator" in line:
+                continue
             self.to_log.append(line)
             print(line)
