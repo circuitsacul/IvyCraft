@@ -11,7 +11,8 @@ class Config:
     ivycraft_guild: int = -1
     required_role: int = -1
 
-    server_path: str = "**PATH TO SERVER JAR**"
+    server_path: str = "~/server"
+    server_memory: str = "3G"
 
     db_name: str = "**DATABASE NAME**"
     db_user: Optional[str] = None
