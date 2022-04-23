@@ -1,11 +1,11 @@
-CREATE TABLE user ();
+CREATE TABLE users ();
 CREATE TABLE _migrations ();
-ALTER TABLE user ADD COLUMN discord_id NUMERIC;
-ALTER TABLE user ADD COLUMN minecraft_uuid TEXT;
-ALTER TABLE user ADD COLUMN whitelisted BOOLEAN;
+ALTER TABLE users ADD COLUMN discord_id NUMERIC;
+ALTER TABLE users ADD COLUMN minecraft_uuid TEXT;
+ALTER TABLE users ADD COLUMN whitelisted BOOLEAN;
 ALTER TABLE _migrations ADD COLUMN id_ INTEGER;
-ALTER TABLE user ALTER COLUMN discord_id SET NOT NULL;
-ALTER TABLE user ALTER COLUMN whitelisted SET NOT NULL;
+ALTER TABLE users ALTER COLUMN discord_id SET NOT NULL;
+ALTER TABLE users ALTER COLUMN whitelisted SET NOT NULL;
 ALTER TABLE _migrations ALTER COLUMN id_ SET NOT NULL;
-ALTER TABLE user ADD CONSTRAINT _user_discord_id_primary_key PRIMARY KEY ( discord_id );
+ALTER TABLE users ADD CONSTRAINT _users_discord_id_primary_key PRIMARY KEY ( discord_id );
 ALTER TABLE _migrations ADD CONSTRAINT __migrations_id__primary_key PRIMARY KEY ( id_ );

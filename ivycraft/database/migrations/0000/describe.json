@@ -1,7 +1,7 @@
 {
     "tables": [
         {
-            "name": "user",
+            "name": "users",
             "fields": [
                 {
                     "name": "discord_id",
@@ -21,8 +21,8 @@
             ],
             "fk_constraints": [],
             "pk_constraint": {
-                "name": "_user_discord_id_primary_key",
-                "raw_sql": "CONSTRAINT _user_discord_id_primary_key PRIMARY KEY ( discord_id )"
+                "name": "_users_discord_id_primary_key",
+                "raw_sql": "CONSTRAINT _users_discord_id_primary_key PRIMARY KEY ( discord_id )"
             },
             "unique_constraints": [],
             "check_constraints": [],
