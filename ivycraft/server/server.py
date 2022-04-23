@@ -18,17 +18,12 @@ class MCServer:
 
     async def start(self) -> None:
         self.proc = subprocess.Popen(
-            [
-                "java",
-                f"-Xmx{CONFIG.server_memory}",
-                f"-Xms{CONFIG.server_memory}",
-                "-jar",
-                self.path / "server.jar",
-                "nogui",
-            ],
+            f"cd {self.path.resolve()} && java -Xmx{CONFIG.server_memory} "
+            f"-Xms{CONFIG.server_memory} -jar server.jar nogui",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
+            shell=True,
         )
         await self.update_whitelist()
 
