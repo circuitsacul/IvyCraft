@@ -23,7 +23,7 @@ class Whitelist:
         )
         wl_json = json.dumps(
             [
-                {"uuid": wl.minecraft_uuid}
+                {"uuid": wl.minecraft_uuid, "name": str(wl.discord_id)}
                 for wl in whitelisted
                 if wl.minecraft_uuid is not None
             ]
