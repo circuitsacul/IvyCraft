@@ -52,7 +52,7 @@ class Whois:
         bot = cast("Bot", ctx.app)
 
         if self.discord_user is not None:
-            user = await User.exists(id=self.discord_user.id)
+            user = await User.exists(discord_id=self.discord_user.id)
             if user is None or user.minecraft_uuid is None:
                 await ctx.respond(
                     f"{self.discord_user} has not linked their minecraft "
