@@ -45,7 +45,7 @@ class RunCommand:
 
     async def callback(self, ctx: crescent.Context) -> None:
         bot = cast("Bot", ctx.app)
-        await bot.server.command(self.command)
+        bot.server.command(self.command)
         await ctx.respond("Executed command.")
 
 
