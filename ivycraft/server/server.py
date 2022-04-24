@@ -30,7 +30,7 @@ def paginate(text: str) -> Iterator[str]:
 
 
 CHAT_MSG = re.compile(
-    r"\[Async Chat Thread - #\d+\/INFO]: <(?<name>.+)> (?<message>.+)"
+    r"\[Async Chat Thread - #\d+\/INFO]: <(?P<name>.+)> (?P<message>.+)"
 )
 
 
