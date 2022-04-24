@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import pathlib
+import re
 import subprocess
 import threading
 from typing import TYPE_CHECKING, Iterator
@@ -19,13 +20,18 @@ if TYPE_CHECKING:
 
 def paginate(text: str) -> Iterator[str]:
     current = 0
-    jump = 500
+    jump = 50
     while True:
         page = text[current : current + jump]
         current += jump
         yield page
         if current >= len(text):
             return
+
+
+CHAT_MSG = re.compile(
+    r"\[Async Chat Thread - #\d+\/INFO]: <(?<name>.+)> (?<message>.+)"
+)
 
 
 class MCServer:
@@ -37,7 +43,7 @@ class MCServer:
         self.path = pathlib.Path(CONFIG.server_path)
         self.whitelist = Whitelist(self.path / "whitelist.json", bot)
 
-        self.to_log: list[str] = []
+        self.chat_message_queue: list[str] = []
 
         self.reader = threading.Thread(target=self._reader_thread)
         self.logger: asyncio.Task[None] | None = None
@@ -53,18 +59,18 @@ class MCServer:
         )
         self.reader.start()
         await self.update_whitelist()
-        self.logger = asyncio.create_task(self.logger_loop())
+        self.logger = asyncio.create_task(self.sender_loop())
 
-    async def logger_loop(self) -> None:
+    async def sender_loop(self) -> None:
         while True:
-            await asyncio.sleep(10)
-            if not self.to_log:
+            await asyncio.sleep(1)
+            if not self.chat_message_queue:
                 continue
 
-            to_send = "\n".join(lin.strip() for lin in self.to_log)
+            to_send = "\n".join(lin.strip() for lin in self.chat_message_queue)
             for page in paginate(to_send):
-                await self.bot.rest.create_message(CONFIG.log_channel, page)
-            self.to_log.clear()
+                await self.bot.rest.create_message(CONFIG.chat_channel, page)
+            self.chat_message_queue.clear()
 
     def command(self, command: str) -> None:
         assert self.proc is not None
@@ -88,9 +94,12 @@ class MCServer:
         assert self.proc.stdout is not None
         for _line in iter(self.proc.stdout.readline, b""):
             line: str = _line.decode().strip()
-            if "Preparing spawn area" in line:
-                continue
-            if "User Authenticator" in line:
-                continue
-            self.to_log.append(line)
             print(line)
+            match = CHAT_MSG.match(line)
+            if match is None:
+                continue
+
+            else:
+                self.chat_message_queue.append(
+                    f"<{match.group('name')}> {match.group('message')}"
+                )

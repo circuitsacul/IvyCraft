@@ -17,13 +17,18 @@ class Bot(crescent.Bot):
         super().__init__(
             CONFIG.discord_token,
             default_guild=CONFIG.ivycraft_guild,
-            intents=hikari.Intents.GUILD_MEMBERS,
+            intents=(
+                hikari.Intents.GUILD_MEMBERS
+                | hikari.Intents.GUILD_MESSAGES
+                | hikari.Intents.MESSAGE_CONTENT
+            ),
         )
 
         self.db = IvyDB()
         self.server = MCServer(self)
 
         self.plugins.load("ivycraft.bot.commands")
+        self.plugins.load("ivycraft.bot.events")
 
     @property
     def cache(self) -> Cache:
