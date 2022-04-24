@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 def paginate(text: str) -> Iterator[str]:
     current = 0
-    jump = 50
+    jump = 500
     while True:
         page = text[current : current + jump]
         current += jump
