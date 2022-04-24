@@ -69,7 +69,8 @@ class Whois:
                 return
             await ctx.respond(
                 f"{self.discord_user}'s Minecraft username is "
-                f"{minecraft_user}."
+                f"{minecraft_user}.",
+                ephemeral=True,
             )
 
         elif self.minecraft_user is not None:
