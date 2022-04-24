@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Iterator
 import hikari
 
 from ivycraft.config import CONFIG
-from ivycraft.database.models.user import User
 
 from .whitelist import Whitelist
 
@@ -81,13 +80,6 @@ class MCServer:
     async def update_whitelist(self) -> None:
         await self.whitelist.save()
         self.command("whitelist reload")
-
-    async def whitelist_user(self, user: User, mc_name: str) -> None:
-        self.command(f"whitelist add {mc_name}")
-        await asyncio.sleep(0.5)
-        user.minecraft_uuid = self.whitelist.whitelist_by_name()[mc_name]
-        await user.save()
-        await self.update_whitelist()
 
     def _reader_thread(self) -> None:
         assert self.proc is not None

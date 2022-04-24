@@ -27,7 +27,12 @@ class Whitelist:
         whitelisted = await User.fetch_query().fetchmany()
         wl_json = json.dumps(
             [
-                {"uuid": wl.minecraft_uuid, "name": str(wl.discord_id)}
+                {
+                    "uuid": wl.minecraft_uuid,
+                    "name": await self.bot.mojang.get_username(
+                        wl.minecraft_uuid
+                    ),
+                }
                 for wl in whitelisted
                 if wl.minecraft_uuid is not None and wl.discord_id in members
             ]

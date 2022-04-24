@@ -3,6 +3,7 @@ from typing import Any
 import crescent
 import hikari
 
+from ivycraft.api.mojang import MojangClient
 from ivycraft.config import CONFIG
 from ivycraft.database.database import IvyDB
 from ivycraft.server.server import MCServer
@@ -26,6 +27,7 @@ class Bot(crescent.Bot):
 
         self.db = IvyDB()
         self.server = MCServer(self)
+        self.mojang = MojangClient()
 
         self.plugins.load("ivycraft.bot.commands")
         self.plugins.load("ivycraft.bot.events")

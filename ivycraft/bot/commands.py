@@ -73,7 +73,13 @@ class LinkAccounts:
             )
             return
 
-        await bot.server.whitelist_user(user, self.name)
+        uuid = await bot.mojang.get_uuid(self.name)
+        if uuid is None:
+            await ctx.respond("Invalid username.", ephemeral=True)
+
+        user.minecraft_uuid = uuid
+        await user.save()
+        await bot.server.update_whitelist()
         await ctx.respond(
             "You've linked your Minecraft account.", ephemeral=True
         )
