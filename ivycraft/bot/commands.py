@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import crescent
-import hikari
 
 from ivycraft.config import CONFIG
 from ivycraft.database.models.user import User
@@ -50,50 +49,6 @@ class RunCommand:
 
 
 @plugin.include
-@crescent.hook(mc_mod)
-@crescent.command(name="whitelist", description="Whitelist a player.")
-class WhitelistUser:
-    user = crescent.option(hikari.User, "The user to whitelist.")
-
-    async def callback(self, ctx: crescent.Context) -> None:
-        bot = cast("Bot", ctx.app)
-
-        user = await User.exists(discord_id=self.user.id)
-        if not user:
-            user = await User(
-                discord_id=self.user.id, whitelisted=True
-            ).create()
-
-        else:
-            user.whitelisted = True
-            await user.save()
-
-        await ctx.respond(f"{self.user} has been whitelisted.")
-        await bot.server.update_whitelist()
-
-
-@plugin.include
-@crescent.hook(mc_mod)
-@crescent.command(name="unwhitelist", description="Unwhitelist a player.")
-class UnwhitelistUser:
-    user = crescent.option(hikari.User, "The user to unwhitelist.")
-
-    async def callback(self, ctx: crescent.Context) -> None:
-        bot = cast("Bot", ctx.app)
-
-        user = await User.exists(discord_id=self.user.id)
-        if (not user) or user.whitelisted is False:
-            await ctx.respond(f"{self.user} is not whitelisted.")
-            return
-
-        user.whitelisted = False
-        await user.save()
-
-        await ctx.respond(f"{self.user} has been unwhitelisted.")
-        await bot.server.update_whitelist()
-
-
-@plugin.include
 @crescent.hook(guild_only)
 @crescent.command(
     name="connect", description="Link your discord to your minecraft account."
@@ -108,9 +63,8 @@ class LinkAccounts:
         assert ctx.member is not None
 
         user = await User.exists(discord_id=ctx.member.id)
-        if user is None or not user.whitelisted:
-            await ctx.respond("You are not whitelisted.", ephemeral=True)
-            return
+        if user is None:
+            user = await User(discord_id=ctx.member.id).create()
 
         if user.minecraft_uuid:
             await ctx.respond(

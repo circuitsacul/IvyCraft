@@ -35,7 +35,7 @@ class MCServer:
 
         self.proc: subprocess.Popen[bytes] | None = None
         self.path = pathlib.Path(CONFIG.server_path)
-        self.whitelist = Whitelist(self.path / "whitelist.json")
+        self.whitelist = Whitelist(self.path / "whitelist.json", bot)
 
         self.to_log: list[str] = []
 
