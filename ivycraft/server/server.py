@@ -95,11 +95,9 @@ class MCServer:
         for _line in iter(self.proc.stdout.readline, b""):
             line: str = _line.decode().strip()
             print(line)
-            match = CHAT_MSG.match(line)
-            if match is None:
+            match = CHAT_MSG.findall(line)
+            if not match:
                 continue
 
-            else:
-                self.chat_message_queue.append(
-                    f"<{match.group('name')}> {match.group('message')}"
-                )
+            name, message = match[0]
+            self.chat_message_queue.append(f"<{name}> {message}")
