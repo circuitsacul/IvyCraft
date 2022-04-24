@@ -39,6 +39,18 @@ plugin = crescent.Plugin("commands")
 
 @plugin.include
 @crescent.hook(mc_mod)
+@crescent.command(name="run", description="Run a Minecraft command.")
+class RunCommand:
+    command = crescent.option(str, "The command to run.")
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        bot = cast("Bot", ctx.app)
+        await bot.server.command(self.command)
+        await ctx.respond("Executed command.")
+
+
+@plugin.include
+@crescent.hook(mc_mod)
 @crescent.command(name="whitelist", description="Whitelist a player.")
 class WhitelistUser:
     user = crescent.option(hikari.User, "The user to whitelist.")
