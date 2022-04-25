@@ -31,6 +31,8 @@ def paginate(text: str) -> Iterator[str]:
 CHAT_MSG = re.compile(
     r"\[Async Chat Thread - #\d+\/INFO]: <(?P<name>.+)> (?P<message>.+)"
 )
+LEAVE_MSG = re.compile(r"\[Server thread\/INFO]: (?P<name>.+) left the game")
+JOIN_MSG = re.compile(r"\[Server thread\/INFO]: (?P<name>.+)\[\/.+] logged in")
 
 
 class MCServer:
@@ -87,9 +89,12 @@ class MCServer:
         for _line in iter(self.proc.stdout.readline, b""):
             line: str = _line.decode().strip()
             print(line)
-            match = CHAT_MSG.findall(line)
-            if not match:
-                continue
-
-            name, message = match[0]
-            self.chat_message_queue.append(f"<{name}> {message}")
+            if match := CHAT_MSG.findall(line):
+                name, message = match[0]
+                self.chat_message_queue.append(f"<{name}> {message}")
+            elif match := LEAVE_MSG.findall(line):
+                name = match[0]
+                self.chat_message_queue.append(f"{name} left the game")
+            elif match := JOIN_MSG.findall(line):
+                name = match[0]
+                self.chat_message_queue.append(f"{name} joined the game")
