@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+import hikari
 
 from hikari.impl.cache import CacheImpl
 from hikari.impl.config import CacheSettings
@@ -42,3 +43,11 @@ class Cache(CacheImpl):
         if int(guild) == CONFIG.ivycraft_guild and self._ivycraft_members:
             self._ivycraft_members.remove(int(user))
         return super().delete_member(guild, user)
+
+    def set_member(self, member: hikari.Member) -> None:
+        if (
+            int(member.guild_id) == CONFIG.ivycraft_guild
+            and self._ivycraft_members is not None
+        ):
+            self._ivycraft_members.add(int(member))
+        return super().set_member(member)
