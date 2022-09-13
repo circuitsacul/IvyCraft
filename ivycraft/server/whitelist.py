@@ -10,11 +10,6 @@ if TYPE_CHECKING:
     from ivycraft.bot.bot import Bot
 
 
-def hyphenate_uuid(uuid: str) -> str:
-    # I hate minecraft
-    return f"{uuid[:8]}-{uuid[8:12]}-{uuid[12:16]}-{uuid[16:20]}-{uuid[20:]}"
-
-
 class Whitelist:
     def __init__(self, path: Path, bot: Bot) -> None:
         self.path = path
@@ -33,7 +28,7 @@ class Whitelist:
         wl_json = json.dumps(
             [
                 {
-                    "uuid": hyphenate_uuid(wl.minecraft_uuid),
+                    "uuid": wl.minecraft_uuid,
                     "name": await self.bot.mojang.get_username(
                         wl.minecraft_uuid
                     ),

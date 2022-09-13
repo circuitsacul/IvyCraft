@@ -31,7 +31,8 @@ class MojangClient:
     async def get_username(self, uuid: str) -> str | None:
         ses = await self.session()
         async with ses.get(
-            f"https://api.mojang.com/user/profiles/{uuid}/names"
+            "https://sessionserver.mojang.com/session/minecraft/profile/"
+            f"{uuid}"
         ) as resp:
             if resp.status != 200:
                 return None
