@@ -38,4 +38,4 @@ class MojangClient:
                 return None
             data = await resp.json()
 
-        return data[0]["name"]  # type: ignore
+        return data["name"]  # type: ignore
